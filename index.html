@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Aplikasi Penulis Track Record</title>
+    
+  <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+  </head>
+  <body>
+    <div class="container text-center">
+      <h2>Aplikasi Record Pelajaran</h2>
+      <div class="container">
+        <p id="timer" class="text-right">00000</p>
+      </div>
+      <hr />
+    </div>
+    <div id="content" class="container text-center">
+      <input class="form-control mb-1" type="text" id="judul" placeholder="Nama Course">
+      <input class="form-control mb-1" type="date" id="tanggal" placeholder="Tanggal Belajar" />
+      <input class="form-control mb-1" type="text" id="progress" placeholder="Progress Course" />
+      <textarea id="writer" class="form-control mb-1"></textarea>
+      <hr />
+      <button class="btn btn-lg btn-primary my-1" type="button" onclick="cekData()">Simpan Data</button>
+      <button class="btn btn-lg btn-success my-1" type="button" onclick="lihatData()">Lihat Data</button>
+      <hr />
+    </div>
+    
+    <script src="https://cdn.ckeditor.com/4.16.1/standard/ckeditor.js"></script>
+    
+    <!--untuk upload ke restdb.io -->
+    <!--<script src="./connection.js"></script>-->
+    
+    
+    <script>
+      let writer = CKEDITOR.replace('writer');
+      CKEDITOR.config.enterMode = CKEDITOR.ENTER_BR;
+      
+      function timer(){
+      let countDown = new Date("Feb 28, 2022 15:00:00").getTime();
+      let now = new Date().getTime();
+      let distance = countDown - now;
+     
+        let day = Math.floor(distance/(1000*60*60*24));
+        let hours = Math.floor(distance % (1000*60*60*24) / (1000*60*60));
+        let minutes = Math.floor(distance % (1000*60*60) / (1000*60));
+        let seconds = Math.floor(distance % (1000*60) / 1000);
+        let mili = Math.floor(distance % 1000 / 100);
+        document.getElementById('timer').innerText = day + " hari, " + hours + ":" + minutes + ":" + seconds + ":" + mili;
+        
+      if(distance == 0)
+      {
+        timer.innerText = "Waktu Habis";
+        clearInterval(counter);
+      }
+      }
+    let counter = setInterval(timer, 100);
+      
+      let data = {
+       "judul" : "",
+       "tanggal" : "",
+       "progress" : "",
+       "catatan" : ""
+      };
+      
+      writer.on('change', (e) => {
+        data.catatan = e.editor.getData();
+        //console.log("Total Bytes: " + e.editor.getData().length);
+      });
+      
+      //let getJudul = document.getElementById('judul');
+      judul.addEventListener('input',(e) => {
+        data.judul = e.target.value;
+      });
+      
+      //let getTanggal = document.getElementById('tanggal');
+      tanggal.addEventListener('change', (e) => {
+        data.tanggal = e.target.value;
+      });
+      
+      //let getProgress = document.getElementById('progress');
+      progress.addEventListener('input',(e) =>{
+        data.progress = e.target.value;
+      });
+     // let catatan = [];
+      function cekData(){
+        let num = localStorage.length;
+        let catatan = "catatan" + num;
+       // console.log(data);
+        localStorage.setItem(catatan, JSON.stringify(data));
+        //console.log(localStorage);
+      }
+      
+      let backup = null;
+      let cek = 0;
+        let content = document.getElementById("content");
+        backup = content.innerHTML;
+        console.log(backup);
+        
+        function back(){
+          content.innerHTML = backup;
+          document.location.reload();
+        }
+        
+      function lihatData(){
+      console.log(cek);
+      if (cek == localStorage.length)
+      {
+        //console.log('limit reach');
+        cek=0;
+        //content.innerHTML = backup;
+      }
+        let look = localStorage.length;
+        //console.log(look);
+        let index = "catatan" + cek;
+        let ambil = JSON.parse(localStorage.getItem(index));
+        //console.log(ambil);
+        content.innerHTML = 
+`<h3>${ambil.judul}</h3>
+<h4>${ambil.progress}</h3>
+<pre>${ambil.tanggal}</pre>
+<hr />
+<p>${ambil.catatan}</p>
+<hr />
+<button class="btn btn-lg btn-danger my-1" onclick="back()">Tutup</button>
+<button class="btn btn-lg btn-success my-1" onclick="lihatData()">Selanjutnya</button>
+<hr />
+`;
+        cek++;
+      
+      }
+     
+      
+    </script>
+  </body>
+</html>
