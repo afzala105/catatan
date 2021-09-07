@@ -1,1 +1,53 @@
-
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="naufal's home" content="pesanan naufal">
+    <title>Naufal's IOT</title>
+  </head>
+  <body>
+    
+    <input id="namaWifi" type="text" />
+    <input id="passWifi" type="text" />
+    <button id="btn" onclick="connect()" disabled>kirim</button>
+    
+    <script src="./jquery.min.js"></script>
+    <script>
+    
+    let namaWifi = document.querySelector('#namaWifi');
+    let passWifi = document.querySelector('#passWifi');
+    
+    namaWifi.addEventListener('input', function(){cek();});
+    passWifi.addEventListener('input', function(){cek();});
+  
+    
+    function cek(){
+    if(namaWifi.value != "" && passWifi.value != ""){
+      document.querySelector('#btn').removeAttribute('disabled');
+    }
+    }
+    
+      function connect(){
+        console.log("data diproses");
+        let data = new FormData();
+        data.append('namaWifi', namaWifi.value);
+        data.append('passWifi', passWifi.value);
+        
+        console.log(data);
+            $.ajax({
+                url: 'http://192.168.4.1/wifi',
+                type: 'POST',
+                dataType: 'html',
+                data: data,
+                cache: false,
+                contentType: false,
+                processData: false,
+            })
+            .always(function() {
+            });
+      
+      }
+      
+    </script>
+  </body>
+</html>
